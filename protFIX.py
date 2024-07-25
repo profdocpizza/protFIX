@@ -30,21 +30,6 @@ def run_task(task):
         task, residue_df, monomers, chain_id
     )
 
-    # diffusion_output_file_path = os.path.join(
-    #     task["output_dir"], f"{task['name']}_fixed_backbone_0.pdb"
-    # )
-    # fixed_backbone_assembly = ampal.load_pdb(diffusion_output_file_path)
-
-    # sequence_choice = "".join(residue_df["complete_mol_letter"].to_list())
-    # packed_fixed_sctructure = pack_side_chains_scwrl(
-    #     fixed_backbone_assembly, [sequence_choice]
-    # )
-
-    # packed_file_path = diffusion_output_file_path.replace("_backbone_0", "")
-    # with open(packed_file_path, "w") as f:
-    #     f.write(packed_fixed_sctructure.pdb)
-    # print(f"Task {task['name']} done. PDB saved at {packed_file_path}")
-
     packed_file_path = pack_side_chains_on_diffusion_output(
         diffusion_output_file_path, selected_sequence
     )

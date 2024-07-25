@@ -25,6 +25,12 @@ def get_root_dir():
     return os.path.dirname(os.path.abspath(__file__))
 
 
+def load_config():
+    with open(os.path.join(get_root_dir(), "config", "config.yaml"), "r") as file:
+        config = yaml.safe_load(file)
+    return config
+
+
 def find_best_alignment_extend(df, full_sequence):
     seq_length = len(full_sequence)
     max_res_id = df.index.max()
@@ -159,12 +165,16 @@ def create_and_save_residue_presets(monomers):
     # save residue_dict as pickle
     import pickle
 
-    with open("/home/tadas/code/dreamer/data/ampal_residue_presets", "wb") as handle:
+    with open(
+        os.path.join(get_root_dir(), "data", "ampal_residue_presets"), "wb"
+    ) as handle:
         pickle.dump(residue_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 
 def load_residue_presets():
-    with open("/home/tadas/code/dreamer/data/ampal_residue_presets", "rb") as handle:
+    with open(
+        os.path.join(get_root_dir(), "data", "ampal_residue_presets"), "rb"
+    ) as handle:
         residue_dict = pickle.load(handle)
     return residue_dict
 
@@ -237,7 +247,6 @@ def run_structure_inpainting(task, residue_df, monomers, chain_id):
     )
     save_commplete_chain_pdb(residue_df, monomers, chain_id, mock_residues_pdb_path)
 
-    rf_diffusion_install_dir = "/home/tadas/code/RFdiffusion"
     output_prefix = f"{task['output_dir']}/{task['name']}_fixed_backbone"
 
     rfdiffusion_command = generate_rfdiffusion_command(
@@ -245,7 +254,7 @@ def run_structure_inpainting(task, residue_df, monomers, chain_id):
         chain_id,
         mock_residues_pdb_path,
         output_prefix,
-        rf_diffusion_install_dir,
+        load_config()["RF_DIFFUSION_INSTALL_DIR"],
         num_designs=1,
         deterministic=True,
     )
